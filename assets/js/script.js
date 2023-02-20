@@ -6,7 +6,9 @@ const searchForm = document.querySelector('#search-form');
 const searchInput = document.querySelector('#search-input');
 const searchBtn = document.querySelector('#search-button')
 const historyList = $('#history');
+const forecastHead = $('#forecast-header');
 const forecastList = $('#forecast').empty();
+const todayHead = $('#current-header');
 const todayWeather = $('#today').empty();
 const cityList = [];
 
@@ -21,12 +23,13 @@ let weatherSearch = (cityName) => {
         console.log(response);
       
   // Define current weather element
+      const todayHeader = $("<h2 class='mt-1 h3 form-label font-effect-outline'>").text("Today Weather")
       const dateFormat = moment().format("LL");
-      const currentCity = $("<h2>").text(response.name);
-      const currentDate = $("<h3>").text("Date: " + dateFormat)
-      const currentTemp = $("<p>").text("Current Tempature: "+Math.round(response.main.temp-273.15) + " °C");
-      const currentHumidity = $("<p>").text("Current Humidity: "+response.main.humidity + " %");
-      const currentWindSpeed = $("<p>").text("Current Wind Speed: "+response.wind.speed + " meter/sec");
+      const currentCity = $("<h2 class='ml-2'>").text(response.name);
+      const currentDate = $("<h3 class='ml-2'>").text("Date: " + dateFormat)
+      const currentTemp = $("<p class='ml-2'>").text("Current Tempature: "+Math.round(response.main.temp-273.15) + " °C");
+      const currentHumidity = $("<p class='ml-2'>").text("Current Humidity: "+response.main.humidity + " %");
+      const currentWindSpeed = $("<p class='ml-2'>").text("Current Wind Speed: "+response.wind.speed + " meter/sec");
   // Update Icon according to the weather
       const currentWeather = response.weather[0].main;
       let currentIcon;
@@ -50,6 +53,8 @@ let weatherSearch = (cityName) => {
     }
     const currentWeatherSection = $('<section>');
     currentWeatherSection.append(currentCity, currentIcon,currentDate,currentTemp,currentHumidity,currentWindSpeed);
+    todayHead.append(todayHeader);
+    todayWeather.addClass("border");
     todayWeather.html(currentWeatherSection);
   });
   // Get 5 days forecast by OpenWeatherAPI
@@ -61,8 +66,9 @@ let weatherSearch = (cityName) => {
     console.log(responseForecast);
   // Create cards for forecast
   let forecastCard;
+  let forecastHeader = $("<h2 class='mt-1 h3 form-label font-effect-outline'>").text("5 days forecast")
   for (let i = 2; i < responseForecast.list.length; i += 8) {
-    forecastCard = $("<section class='card bg-secondary mb-3 mx-auto' style='width:8 rem; height:10 rem;'>")
+    forecastCard = $("<section class='card bg-secondary mb-3 mx-auto col-2'>")
     let forecastDate = $("<p class='card-text'>").text(responseForecast.list[i].dt_txt.substr(0,10));
     const forecastTemp = $("<p class='card-text'>").text("Temp: " + Math.round(responseForecast.list[i].main.temp-273.15)+ " °C");
     const forecastHumidity = $("<p class='card-text'>").text("Humidity: " + responseForecast.list[i].main.humidity + " %");
@@ -90,13 +96,13 @@ let weatherSearch = (cityName) => {
   };
   // Append element to forecast container
   forecastCard.append(forecastDate,forecastIcon,forecastTemp,forecastHumidity,forecastWind);
+  forecastHead.append(forecastHeader);
   forecastList.append(forecastCard);
   }
   });
 };
 
 // Store search history to search list
-
 
 // Function to search for a city
 let citySearch = () => {
@@ -134,3 +140,4 @@ historyList.on('click', ".btn", function(event){
   forecastList.empty()
   weatherSearch($(this).text());
 })
+
